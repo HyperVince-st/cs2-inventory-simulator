@@ -1,7 +1,7 @@
 # Adapted from Remix's Indie Stack
 FROM node:18-bullseye-slim AS base
 
-ENV NODE_ENV=production
+ENV NODE_ENV=dev
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y openssl git
@@ -11,13 +11,14 @@ FROM base AS deps
 
 WORKDIR /myapp
 COPY package.json package-lock.json ./
-RUN npm ci --include=dev
+RUN npm ci --include=dev --ignore-scripts
 
 # Generate Prisma client, add commit hash, and build the app
 FROM deps AS build
 
+# ENV SOURCE_COMMIT=${SOURCE_COMMIT}
 ARG SOURCE_COMMIT
-ENV SOURCE_COMMIT=${SOURCE_COMMIT}
+ENV SOURCE_COMMIT=unkown
 
 COPY prisma ./prisma
 RUN npx prisma generate
@@ -41,6 +42,7 @@ COPY --from=build /myapp/public /myapp/public
 COPY --from=build /myapp/package.json /myapp/package.json
 COPY --from=build /myapp/start.sh /myapp/start.sh
 COPY --from=build /myapp/prisma /myapp/prisma
-COPY --from=build /myapp/.build-last-commit /myapp/.build-last-commit
+# COPY --from=build /myapp/.build-last-commit /myapp/.build-last-commit
+# COPY --from=build /myapp/scripts /myapp/scripts
 
 ENTRYPOINT [ "./start.sh" ]
