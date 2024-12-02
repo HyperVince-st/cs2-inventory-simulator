@@ -2,6 +2,10 @@
 
 If you are looking into self-hosting your own Inventory Simulator instance, check out our [Dockerfile](https://github.com/ianlucas/cs2-inventory-simulator/blob/main/Dockerfile) for a more precise step-by-step instruction for building and starting the app.
 
+Configure the .env file properly.
+Run `docker-compose up --build` to build and start the container.
+The app will then be accessible at **http://localhost:3000**.
+
 ## Steps for building and starting the app
 
 1. Have at least Node 18.x installed in your system.
